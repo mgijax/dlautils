@@ -175,11 +175,7 @@ getConfigEnv ()
 #
 #  Name:  mailLog
 #
-#  Usage:  mailLog  loadName
-#
-#          where
-#              loadName is the name of the load to be included in the
-#                       subject of the mail.
+#  Usage:  mailLog
 #
 #  Purpose:  Send the Process Summary Log and Curator Summary Log to any
 #            recipients that have been defined to receive them.
@@ -201,15 +197,6 @@ getConfigEnv ()
 mailLog ()
 {
     #
-    #  Make sure the name of the load was passed to the function.
-    #
-    if [ $# -ne 1 ]
-    then
-        echo "Usage:  mailLog  loadName"
-        exit 1
-    fi
-
-    #
     #  If any recipients have been defined for the Process Summary Log,
     #  mail it to them.
     #
@@ -217,7 +204,7 @@ mailLog ()
     then
         for i in `echo ${MAIL_LOG_PROC} | sed 's/,/ /g'`
         do
-            mailx -s "$1 - Process Summary Log" ${i} < ${LOG_PROC}
+            mailx -s "${MAIL_LOADNAME} - Process Summary Log" ${i} < ${LOG_PROC}
         done
     fi
 
@@ -229,7 +216,7 @@ mailLog ()
     then
         for i in `echo ${MAIL_LOG_CUR} | sed 's/,/ /g'`
         do
-            mailx -s "$1 - Curator Summary Log" ${i} < ${LOG_CUR}
+            mailx -s "${MAIL_LOADNAME} - Curator Summary Log" ${i} < ${LOG_CUR}
         done
     fi
 }
@@ -431,14 +418,23 @@ postload ()
 	echo "End the job stream" >> ${LOG_PROC}
 	${JOBEND_CSH} ${RADAR_DBSCHEMADIR} ${JOBKEY} ${STAT}
     fi
+
     #
     #  End the log files.
     #
     stopLog ${LOG_PROC} ${LOG_DIAG} ${LOG_CUR} ${LOG_VAL} | tee -a ${LOG}
+
+    #
+    #  Mail the logs to the support staff.
+    #
+    mailLog | tee -a ${LOG}
 }
 
 
 #  $Log$
+#  Revision 1.1  2004/06/16 15:38:37  dbm
+#  New
+#
 #
 ###########################################################################
 #
