@@ -307,7 +307,7 @@ stopLog ()
     #
     if [ $# -eq 0 ]
     then
-        echo "Usage:  startLog  logFile(s)" | tee -a ${LOG}
+        echo "Usage:  stopLog  logFile(s)" | tee -a ${LOG}
         exit 1
     fi
 
@@ -329,7 +329,7 @@ stopLog ()
 #
 #  Name:  preload
 #
-#  Usage:  preload
+#  Usage:  preload [ list of other dirs to archive ]
 #
 #  Purpose:  Runs createArchive, startLog, getConfigEnv and gets the next
 #            available job stream key.
@@ -357,7 +357,12 @@ preload ()
     #
     #  Archive the log and report files from the previous run.
     #
-    createArchive ${ARCHIVEDIR} ${LOGDIR} ${RPTDIR} | tee -a ${LOG}
+    if [ $# -gt 0 ]
+    then
+        createArchive ${ARCHIVEDIR} ${LOGDIR} ${RPTDIR} $* | tee -a ${LOG}
+    else
+	createArchive ${ARCHIVEDIR} ${LOGDIR} ${RPTDIR} | tee -a ${LOG}
+    fi
 
     #
     #  Initialize the log files.
@@ -429,9 +434,44 @@ postload ()
     #
     mailLog | tee -a ${LOG}
 }
-
+###########################################################################
+#
+#  Name:  cleanDir
+#
+#  Usage: clean dir1 ... dirN
+#
+#  Purpose: removes all files and directories in each dir on the 
+#           command line
+#  Returns:
+#
+#       Nothing = Successful completion
+#       1 = An error occurred
+#
+#  Assumes:  Nothing
+#
+#  Effects:  Nothing
+#
+#  Throws:  Nothing
+#
+#  Notes:  None
+#
+###########################################################################
+cleanDir ()
+{
+    for dir in $*
+    do
+	if [ -d ${dir} ]
+	then
+	    echo "removing all files and directories from ${dir}"
+  	    rm -rf ${dir}/*	
+	fi
+    done
+}
 
 #  $Log$
+#  Revision 1.2  2004/06/30 18:16:42  dbm
+#  Added MAIL_LOADNAME for mailLog and call mailLog from postload
+#
 #  Revision 1.1  2004/06/16 15:38:37  dbm
 #  New
 #
