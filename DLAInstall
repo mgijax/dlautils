@@ -9,9 +9,12 @@
 #  Purpose:  This script will install a data load product that follows the
 #            DLA standards.
 #
-#  Usage:  DLAInstall  commonConfig  loadConfig  [loadConfigList]
+#  Usage:  DLAInstall  [-n]  commonConfig  loadConfig  [loadConfigList]
 #
 #          where
+#              -n is an option that tells the script that it does not need
+#                 to verify the set of directories that are required by
+#                 most loads (FILEDIR, INPUTDIR, OUTPUTDIR, etc).
 #              commonConfig is full path name of the common configuration
 #                           file (common.config).
 #              loadConfig is the full path name of the configuration file
@@ -66,13 +69,28 @@ installFailed ()
 }
 
 #
-#  Make sure the require configuration files were provided to the script.
+#  Verify the arguments to the script.
 #
 if [ $# -lt 2 ]
 then
-    echo "Usage:  $0 commonConfig loadConfig [loadConfigList]"
+    echo "Usage:  $0 [-n] commonConfig loadConfig [loadConfigList]"
     installFailed
 fi
+
+#
+#  Check for the option to not verify directories.
+#
+if [ $1 = "-n" ]
+then
+    CHECK_DIR=no
+    shift
+else
+    CHECK_DIR=yes
+fi
+
+#
+#  Save the common configuration file name.
+#
 COMMON_CONFIG_PATH=$1
 shift
 
@@ -128,75 +146,82 @@ rm -f ${COMMON_CONFIG_FILE}
 ln -s ${COMMON_CONFIG_PATH} ${COMMON_CONFIG_FILE}
 
 #
-#  Verify that the input directory exists.
+#  Verify the directories if the script was not given the option to skip
+#  the verification steps.
 #
-if [ "${INPUTDIR}" = "" ]
+if [ ${CHECK_DIR} = "yes" ]
 then
-    echo "Environment variable INPUTDIR has not been defined."
-    installFailed
-else
-    if [ ! -d ${INPUTDIR} ]
+    #
+    #  Verify that the input directory exists.
+    #
+    if [ "${INPUTDIR}" = "" ]
     then
-        echo "Input directory does not exist: ${INPUTDIR}"
+        echo "Environment variable INPUTDIR has not been defined."
+        installFailed
+    else
+        if [ ! -d ${INPUTDIR} ]
+        then
+            echo "Input directory does not exist: ${INPUTDIR}"
+            installFailed
+        fi
+    fi
+
+    #
+    #  Verify that standard environment variables have been set to define the
+    #  directory structure where the load maintains its files.
+    #
+    if [ "${FILEDIR}" = "" ]
+    then
+        echo "Environment variable FILEDIR has not been defined."
         installFailed
     fi
-fi
 
-#
-#  Verify that standard environment variables have been set to define the
-#  directory structure where the load maintains its files.
-#
-if [ "${FILEDIR}" = "" ]
-then
-    echo "Environment variable FILEDIR has not been defined."
-    installFailed
-fi
-
-if [ "${ARCHIVEDIR}" = "" ]
-then
-    echo "Environment variable ARCHIVEDIR has not been defined."
-    installFailed
-fi
-
-if [ "${LOGDIR}" = "" ]
-then
-    echo "Environment variable LOGDIR has not been defined."
-    installFailed
-fi
-
-if [ "${RPTDIR}" = "" ]
-then
-    echo "Environment variable RPTDIR has not been defined."
-    installFailed
-fi
-
-if [ "${OUTPUTDIR}" = "" ]
-then
-    echo "Environment variable OUTPUTDIR has not been defined."
-    installFailed
-fi
-
-#
-#  Create any standard directories that don't already exist and set the
-#  permissions.
-#
-for i in ${FILEDIR} ${ARCHIVEDIR} ${LOGDIR} ${RPTDIR} ${OUTPUTDIR}
-do
-    if [ ! -d ${i} ]
+    if [ "${ARCHIVEDIR}" = "" ]
     then
-        mkdir -p ${i} >/dev/null 2>&1
-        if [ $? -eq 0 ]
-        then
-              echo "Directory created: ${i}"
-        else
-              echo "Cannot create directory: ${i}"
-              installFailed
-        fi
-        chmod -f 755 ${i}
-    else
-        echo "Directory already exists: ${i}"
+        echo "Environment variable ARCHIVEDIR has not been defined."
+        installFailed
     fi
-done
+
+    if [ "${LOGDIR}" = "" ]
+    then
+        echo "Environment variable LOGDIR has not been defined."
+        installFailed
+    fi
+
+    if [ "${RPTDIR}" = "" ]
+    then
+        echo "Environment variable RPTDIR has not been defined."
+        installFailed
+    fi
+
+    if [ "${OUTPUTDIR}" = "" ]
+    then
+        echo "Environment variable OUTPUTDIR has not been defined."
+        installFailed
+    fi
+
+    #
+    #  Create any standard directories that don't already exist and set the
+    #  permissions.
+    #
+    for i in ${FILEDIR} ${ARCHIVEDIR} ${LOGDIR} ${RPTDIR} ${OUTPUTDIR}
+    do
+        if [ ! -d ${i} ]
+        then
+            mkdir -p ${i} >/dev/null 2>&1
+            if [ $? -eq 0 ]
+            then
+                  echo "Directory created: ${i}"
+            else
+                  echo "Cannot create directory: ${i}"
+                  installFailed
+            fi
+            chmod -f 755 ${i}
+        else
+            echo "Directory already exists: ${i}"
+        fi
+    done
+fi
 
 #
 #  If there is a HTML index file in the installation directory, copy it to
@@ -271,6 +296,9 @@ installCompleted
 
 
 #  $Log$
+#  Revision 1.2  2004/06/22 16:50:09  dbm
+#  Do not create INPUTDIR if it does not exist.
+#
 #  Revision 1.1  2004/06/21 17:55:19  dbm
 #  New
 #
