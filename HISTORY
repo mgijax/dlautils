@@ -1,3 +1,13 @@
+TAG: dlautils-1-0-3
+DATE: 10/19/2004
+STAFF: sc
+RELEASE: Development
+CHANGES: 5395 DLAJobStreamFunctions
+1) added parameter to preload() that 
+   archives contents of all directories on the command line.
+2) Added cleanDir which removes all files and directories from the directories
+   on the command line
+
 TAG: dlautils-1-0-2
 DATE: 10/11/2004
 STAFF: dbm
