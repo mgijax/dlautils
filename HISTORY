@@ -1,3 +1,9 @@
+TAG: dlautils-1-0-1
+DATE: 07/12/2004
+STAFF: dbm
+RELEASE: Development
+CHANGES: Added -n option to DLAInstall script
+
 TAG: dlautils-1-0-0
 DATE: 07/02/2004
 STAFF: sc
