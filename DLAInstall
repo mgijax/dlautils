@@ -9,9 +9,12 @@
 #  Purpose:  This script will install a data load product that follows the
 #            DLA standards.
 #
-#  Usage:  DLAInstall  [-n]  commonConfig  loadConfig  [loadConfigList]
+#  Usage:  DLAInstall  [-d -n]  commonConfig  loadConfig  [loadConfigList]
 #
 #          where
+#              -d is an option that tells the script that this is a
+#                 development installation, so less restrictive permissions
+#                 should be used than if it was in production.
 #              -n is an option that tells the script that it does not need
 #                 to verify the set of directories that are required by
 #                 most loads (FILEDIR, INPUTDIR, OUTPUTDIR, etc).
@@ -73,20 +76,30 @@ installFailed ()
 #
 if [ $# -lt 2 ]
 then
-    echo "Usage:  $0 [-n] commonConfig loadConfig [loadConfigList]"
+    echo "Usage:  $0 [-d -n] commonConfig loadConfig [loadConfigList]"
     installFailed
 fi
 
 #
-#  Check for the option to not verify directories.
+#  Check for the options to the script.
 #
-if [ $1 = "-n" ]
+DEV=no
+CHECK_DIR=yes
+
+set -- `getopt dn $*`
+if [ $? != 0 ]
 then
-    CHECK_DIR=no
-    shift
-else
-    CHECK_DIR=yes
+    usage
 fi
+
+for i in $*
+do
+    case $i in
+        -d) DEV=yes; shift;;
+        -n) CHECK_DIR=no; shift;;
+        --) shift; break;;
+    esac
+done
 
 #
 #  Save the common configuration file name.
@@ -115,7 +128,12 @@ do
     then
         echo "Source ${i}"
         . ${i}
-        chmod -f 640 ${i}*
+        if [ ${DEV} = "yes" ]
+        then
+            chmod -f 664 ${i}*
+        else
+            chmod -f 644 ${i}*
+        fi
     else
         echo "Cannot source configuration file: ${i}"
         installFailed
@@ -216,9 +234,15 @@ then
                   echo "Cannot create directory: ${i}"
                   installFailed
             fi
-            chmod -f 755 ${i}
         else
             echo "Directory already exists: ${i}"
+        fi
+
+        if [ ${DEV} = "yes" ]
+        then
+            chmod -f 775 ${i}
+        else
+            chmod -f 755 ${i}
         fi
     done
 fi
@@ -230,7 +254,12 @@ fi
 if [ -f index.html ]
 then
     echo "Copy index.html to ${FILEDIR}"
-    chmod -f 644 index.html
+    if [ ${DEV} = "yes" ]
+    then
+        chmod -f 664 index.html
+    else
+        chmod -f 644 index.html
+    fi
     cp -p index.html ${FILEDIR}
 fi
 
@@ -238,15 +267,36 @@ fi
 #  Set permissions in the installation directory.
 #
 echo "Set permissions in the installation directory."
+if [ -f HISTORY ]
+then
+    if [ ${DEV} = "yes" ]
+    then
+        chmod -f 664 HISTORY
+    else
+        chmod -f 644 HISTORY
+    fi
+fi
 if [ -d bin ]
 then
-    chmod -f 750 bin
-    find bin -name "*.sh" -exec chmod -f 750 {} \;
+    if [ ${DEV} = "yes" ]
+    then
+        chmod -f 775 bin
+        find bin -name "*.sh" -exec chmod -f 775 {} \;
+    else
+        chmod -f 755 bin
+        find bin -name "*.sh" -exec chmod -f 750 {} \;
+    fi
 fi
 if [ -d system_docs ]
 then
-    chmod -f 750 system_docs
-    find system_docs -type f -exec chmod -f 640 {} \;
+    if [ ${DEV} = "yes" ]
+    then
+        chmod -f 775 system_docs
+        find system_docs -type f -exec chmod -f 664 {} \;
+    else
+        chmod -f 755 system_docs
+        find system_docs -type f -exec chmod -f 644 {} \;
+    fi
 fi
 
 #
@@ -280,22 +330,38 @@ then
     #  Set permissions on Java files and directories.
     #
     echo "Set permissions on Java files and directories."
-    chmod -f 640 build.xml
-    chmod -fR 750 classes
-    chmod -fR 755 javadocs
-    chmod -f 750 *.jar
-    find classes -type d -exec chmod -f 750 {} \;
-    find classes -name "*.class" -exec chmod -f 640 {} \;
-    find javadocs -type d -exec chmod -f 755 {} \;
-    find javadocs -type f -exec chmod -f 644 {} \;
-    find java -type d -exec chmod -f 750 {} \;
-    find java -name "*.java" -exec chmod -f 640 {} \;
+    if [ ${DEV} = "yes" ]
+    then
+        chmod -f 664 build.xml
+        chmod -f 775 *.jar
+        find classes -type d -exec chmod -f 775 {} \;
+        find classes -type f -exec chmod -f 664 {} \;
+        find javadocs -type d -exec chmod -f 775 {} \;
+        find javadocs -type f -exec chmod -f 664 {} \;
+        find java -type d -exec chmod -f 775 {} \;
+        find java -name "*.java" -exec chmod -f 664 {} \;
+    else
+        chmod -f 644 build.xml
+        chmod -f 750 *.jar
+        find classes -type d -exec chmod -f 755 {} \;
+        find classes -type f -exec chmod -f 640 {} \;
+        find javadocs -type d -exec chmod -f 755 {} \;
+        find javadocs -type f -exec chmod -f 644 {} \;
+        find java -type d -exec chmod -f 755 {} \;
+        find java -name "*.java" -exec chmod -f 640 {} \;
+    fi
 fi
 
 installCompleted
 
 
 #  $Log$
+#  Revision 1.3.2.1  2005/01/04 14:00:19  dbm
+#  Added "-d" option for development installs and fixed permission settings.
+#
+#  Revision 1.3  2004/07/12 19:39:53  dbm
+#  Added -n option to skip directory verification
+#
 #  Revision 1.2  2004/06/22 16:50:09  dbm
 #  Do not create INPUTDIR if it does not exist.
 #
