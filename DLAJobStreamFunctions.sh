@@ -462,13 +462,15 @@ cleanDir ()
     do
 	if [ -d ${dir} ]
 	then
-	    echo "removing all files and directories from ${dir}"
   	    rm -rf ${dir}/*	
 	fi
     done
 }
 
 #  $Log$
+#  Revision 1.3  2004/10/19 16:26:58  sc
+#  added param to preload and new function cleanDir
+#
 #  Revision 1.2  2004/06/30 18:16:42  dbm
 #  Added MAIL_LOADNAME for mailLog and call mailLog from postload
 #
