@@ -1,0 +1,10 @@
+To create a new job stream shell script:
+
+1) Make a copy of JobStreamTemplate.sh
+2) Replace each instance of LOADNAME with the name of the load.
+   This will establish the actual name of the shell script,
+   config file and log file.
+3) Replace LOADNAME_APP with the environment variable from the
+   configuration file that holds the path of the Java application.
+4) Add any other logic to the shell script that is needed for the
+   specific load.

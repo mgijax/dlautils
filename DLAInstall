@@ -1,0 +1,294 @@
+#!/bin/sh
+#
+#  $Header$
+#  $Name$
+#
+#  DLAInstall
+###########################################################################
+#
+#  Purpose:  This script will install a data load product that follows the
+#            DLA standards.
+#
+#  Usage:  DLAInstall  commonConfig  loadConfig  [loadConfigList]
+#
+#          where
+#              commonConfig is full path name of the common configuration
+#                           file (common.config).
+#              loadConfig is the full path name of the configuration file
+#                         for the load that is being installed.
+#              loadConfigList is a list of additional configuration file
+#                             path names to be sourced (optional).
+#
+#  Env Vars:  None
+#
+#  Inputs:
+#
+#      - Configuration files
+#
+#  Outputs:  None
+#
+#  Exit Codes:
+#
+#      0 = Successful completion
+#      1 = An error occurred
+#
+#  Assumes:
+#
+#      - All configuration files are sourced in the order that they are
+#        passed to the script. The common configuration file is sourced
+#        first, followed by 1 or more configuration files for the load.
+#      - DLA standards are being followed for environment variable names
+#      - The INSTALLDIR environment variable is set in the configuration
+#        file for the load to define where the load is being installed.
+#
+#  Implementation:
+#
+#  Notes:  None
+#
+###########################################################################
+
+#
+#  Function called when the install completes successfully.
+#
+installCompleted ()
+{
+    echo "Installation Completed: `date`"
+    exit 0
+}
+
+#
+#  Function called when the install fails.
+#
+installFailed ()
+{
+    echo "Installation Failed: `date`"
+    exit 1
+}
+
+#
+#  Make sure the require configuration files were provided to the script.
+#
+if [ $# -lt 2 ]
+then
+    echo "Usage:  $0 commonConfig loadConfig [loadConfigList]"
+    installFailed
+fi
+COMMON_CONFIG_PATH=$1
+shift
+
+#
+#  Make sure the common configuration file exists and source it.
+#
+if [ -r ${COMMON_CONFIG_PATH} ]
+then
+    echo "Source ${COMMON_CONFIG_PATH}"
+    . ${COMMON_CONFIG_PATH}
+else
+    echo "Cannot source common configuration file: ${COMMON_CONFIG_PATH}"
+    installFailed
+fi
+
+#
+#  Make sure each additional configuration file exists and source it.
+#
+for i in $*
+do
+    if [ -r ${i} ]
+    then
+        echo "Source ${i}"
+        . ${i}
+        chmod -f 640 ${i}*
+    else
+        echo "Cannot source configuration file: ${i}"
+        installFailed
+    fi
+done
+
+#
+#  Verify that the installation directory for the load has been defined.
+#
+if [ "${INSTALLDIR}" = "" ]
+then
+    echo "Environment variable INSTALLDIR has not been defined."
+    installFailed
+fi
+
+#
+#  Go to the load installation directory to proceed with the install.
+#
+cd ${INSTALLDIR}
+
+#
+#  Create a symbolic link to the common configuration file from the
+#  load installation directory.
+#
+echo "Create symbolic link to common config file."
+COMMON_CONFIG_FILE=`basename ${COMMON_CONFIG_PATH}`
+rm -f ${COMMON_CONFIG_FILE}
+ln -s ${COMMON_CONFIG_PATH} ${COMMON_CONFIG_FILE}
+
+#
+#  Verify that standard environment variables have been set to define the
+#  directory structure where the load maintains its files.
+#
+if [ "${FILEDIR}" = "" ]
+then
+    echo "Environment variable FILEDIR has not been defined."
+    installFailed
+fi
+
+if [ "${ARCHIVEDIR}" = "" ]
+then
+    echo "Environment variable ARCHIVEDIR has not been defined."
+    installFailed
+fi
+
+if [ "${LOGDIR}" = "" ]
+then
+    echo "Environment variable LOGDIR has not been defined."
+    installFailed
+fi
+
+if [ "${RPTDIR}" = "" ]
+then
+    echo "Environment variable RPTDIR has not been defined."
+    installFailed
+fi
+
+if [ "${INPUTDIR}" = "" ]
+then
+    echo "Environment variable INPUTDIR has not been defined."
+    installFailed
+fi
+
+if [ "${OUTPUTDIR}" = "" ]
+then
+    echo "Environment variable OUTPUTDIR has not been defined."
+    installFailed
+fi
+
+#
+#  Create any standard directories that don't already exist and set the
+#  permissions.
+#
+for i in ${FILEDIR} ${ARCHIVEDIR} ${LOGDIR} ${RPTDIR} ${INPUTDIR} ${OUTPUTDIR}
+do
+    if [ ! -d ${i} ]
+    then
+        mkdir -p ${i} >/dev/null 2>&1
+        if [ $? -eq 0 ]
+        then
+              echo "Directory created: ${i}"
+        else
+              echo "Cannot create directory: ${i}"
+              installFailed
+        fi
+        chmod -f 755 ${i}
+    else
+        echo "Directory already exists: ${i}"
+    fi
+done
+
+#
+#  If there is a HTML index file in the installation directory, copy it to
+#  the FILE directory and set the permissions.
+#
+if [ -f index.html ]
+then
+    if [ "${FILEDIR}" != "" ]
+    then
+        echo "Copy index.html to FILEDIR"
+        chmod -f 644 index.html
+        cp -p index.html ${FILEDIR}
+    else
+        echo "Environment variable FILEDIR has not been defined."
+        echo "Cannot copy index.html"
+        installFailed
+    fi
+fi
+
+#
+#  Set permissions in the installation directory.
+#
+echo "Set permissions in the installation directory."
+if [ -d bin ]
+then
+    chmod -f 750 bin
+    find bin -name "*.sh" -exec chmod -f 750 {} \;
+fi
+if [ -d system_docs ]
+then
+    chmod -f 750 system_docs
+    find system_docs -type f -exec chmod -f 640 {} \;
+fi
+
+#
+#  If there is a build.xml file in the installation directory, perform the
+#  build and set permissions on files and directories.
+#
+if [ -f build.xml ]
+then
+    #
+    #  Verify that the ant utility has been defined.
+    #
+    if [ "${ANT}" = "" ]
+    then
+        echo "Environment variable ANT has not been defined."
+        installFailed
+    fi
+
+    #
+    #  Perform the build using the ant utility.
+    #
+    if [ -x ${ANT} ]
+    then
+        echo "Perform the build using the ant utility."
+        ${ANT} all
+    else
+        echo "Cannot execute ant utility: ${ANT}"
+        installFailed
+    fi
+
+    #
+    #  Set permissions on Java files and directories.
+    #
+    echo "Set permissions on Java files and directories."
+    chmod -f 640 build.xml
+    chmod -fR 750 classes
+    chmod -fR 755 javadocs
+    chmod -f 750 *.jar
+    find classes -type d -exec chmod -f 750 {} \;
+    find classes -name "*.class" -exec chmod -f 640 {} \;
+    find javadocs -type d -exec chmod -f 755 {} \;
+    find javadocs -type f -exec chmod -f 644 {} \;
+    find java -type d -exec chmod -f 750 {} \;
+    find java -name "*.java" -exec chmod -f 640 {} \;
+fi
+
+installCompleted
+
+
+#  $Log$
+#
+###########################################################################
+#
+# Warranty Disclaimer and Copyright Notice
+#
+#  THE JACKSON LABORATORY MAKES NO REPRESENTATION ABOUT THE SUITABILITY OR
+#  ACCURACY OF THIS SOFTWARE OR DATA FOR ANY PURPOSE, AND MAKES NO WARRANTIES,
+#  EITHER EXPRESS OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR A
+#  PARTICULAR PURPOSE OR THAT THE USE OF THIS SOFTWARE OR DATA WILL NOT
+#  INFRINGE ANY THIRD PARTY PATENTS, COPYRIGHTS, TRADEMARKS, OR OTHER RIGHTS.
+#  THE SOFTWARE AND DATA ARE PROVIDED "AS IS".
+#
+#  This software and data are provided to enhance knowledge and encourage
+#  progress in the scientific community and are to be used only for research
+#  and educational purposes.  Any reproduction or use for commercial purpose
+#  is prohibited without the prior express written permission of The Jackson
+#  Laboratory.
+#
+# Copyright \251 1996, 1999, 2002, 2004 by The Jackson Laboratory
+#
+# All Rights Reserved
+#
+##########################################################################
