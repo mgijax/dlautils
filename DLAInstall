@@ -128,6 +128,21 @@ rm -f ${COMMON_CONFIG_FILE}
 ln -s ${COMMON_CONFIG_PATH} ${COMMON_CONFIG_FILE}
 
 #
+#  Verify that the input directory exists.
+#
+if [ "${INPUTDIR}" = "" ]
+then
+    echo "Environment variable INPUTDIR has not been defined."
+    installFailed
+else
+    if [ ! -d ${INPUTDIR} ]
+    then
+        echo "Input directory does not exist: ${INPUTDIR}"
+        installFailed
+    fi
+fi
+
+#
 #  Verify that standard environment variables have been set to define the
 #  directory structure where the load maintains its files.
 #
@@ -155,12 +170,6 @@ then
     installFailed
 fi
 
-if [ "${INPUTDIR}" = "" ]
-then
-    echo "Environment variable INPUTDIR has not been defined."
-    installFailed
-fi
-
 if [ "${OUTPUTDIR}" = "" ]
 then
     echo "Environment variable OUTPUTDIR has not been defined."
@@ -171,7 +180,7 @@ fi
 #  Create any standard directories that don't already exist and set the
 #  permissions.
 #
-for i in ${FILEDIR} ${ARCHIVEDIR} ${LOGDIR} ${RPTDIR} ${INPUTDIR} ${OUTPUTDIR}
+for i in ${FILEDIR} ${ARCHIVEDIR} ${LOGDIR} ${RPTDIR} ${OUTPUTDIR}
 do
     if [ ! -d ${i} ]
     then
@@ -195,16 +204,9 @@ done
 #
 if [ -f index.html ]
 then
-    if [ "${FILEDIR}" != "" ]
-    then
-        echo "Copy index.html to FILEDIR"
-        chmod -f 644 index.html
-        cp -p index.html ${FILEDIR}
-    else
-        echo "Environment variable FILEDIR has not been defined."
-        echo "Cannot copy index.html"
-        installFailed
-    fi
+    echo "Copy index.html to ${FILEDIR}"
+    chmod -f 644 index.html
+    cp -p index.html ${FILEDIR}
 fi
 
 #
@@ -269,6 +271,9 @@ installCompleted
 
 
 #  $Log$
+#  Revision 1.1  2004/06/21 17:55:19  dbm
+#  New
+#
 #
 ###########################################################################
 #
