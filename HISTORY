@@ -1,3 +1,9 @@
+TAG: dlautils-3-2-0-0
+DATE: 08/08/2005
+STAFF: mbw
+RELEASE: Production
+CHANGES: no longer validates INPUTDIR parameter
+
 TAG: dlautils-3-1-1-1
 DATE: 01/26/2005
 STAFF: dbm
