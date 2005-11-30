@@ -469,7 +469,7 @@ shutDown ()
     #
     #  Perform postload steps.
     #
-#    postload
+    postload
 }
 
 
