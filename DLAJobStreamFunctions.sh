@@ -434,6 +434,84 @@ postload ()
     #
     mailLog | tee -a ${LOG}
 }
+
+
+###########################################################################
+#
+#  Name:  shutDown
+#
+#  Usage:  shutDown
+#
+#  Purpose:  Write the location of the log files to the process summary
+#            log and perform postload steps.
+#
+#  Returns:
+#
+#       Nothing = Successful completion
+#       1 = An error occurred
+#
+#  Assumes:  Nothing
+#
+#  Effects:  Nothing
+#
+#  Throws:  Nothing
+#
+#  Notes:  None
+#
+###########################################################################
+shutDown ()
+{
+    #
+    #  Report the location of the log files.
+    #
+    echo "\nSee logs at ${LOGDIR}\n" >> ${LOG_PROC}
+
+    #
+    #  Perform postload steps.
+    #
+#    postload
+}
+
+
+###########################################################################
+#
+#  Name:  checkStatus
+#
+#  Usage:  checkStatus  returnStatus  processName
+#
+#          where
+#              returnStatus is the return code from the call to a process.
+#              processName is the name of the process.
+#
+#  Purpose:  Check the return status from a process and write a message
+#            to the log files.
+#
+#  Returns:
+#
+#       Nothing = Successful completion
+#       1 = An error occurred
+#
+#  Assumes:  Nothing
+#
+#  Effects:  Nothing
+#
+#  Throws:  Nothing
+#
+#  Notes:  None
+#
+###########################################################################
+checkStatus ()
+{
+    if [ $1 -ne 0 ]
+    then
+        echo "$2 Failed. Return status: $1" | tee -a ${LOG_PROC} ${LOG_DIAG}
+        shutDown
+        exit 1
+    fi
+    echo "$2 completed successfully" | tee -a ${LOG_PROC} ${LOG_DIAG}
+}
+
+
 ###########################################################################
 #
 #  Name:  cleanDir
@@ -468,6 +546,9 @@ cleanDir ()
 }
 
 #  $Log$
+#  Revision 1.4  2004/11/03 17:22:12  sc
+#  removed a debug echo
+#
 #  Revision 1.3  2004/10/19 16:26:58  sc
 #  added param to preload and new function cleanDir
 #
