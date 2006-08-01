@@ -1,3 +1,12 @@
+TAG: dlautils-build36-1
+DATE: 08/01/2006
+STAFF: sc
+CHANGES: TR7801
+1) DLAInstall_old - original DLAInstall Script
+2) DLAInstall - updated to install product converted to mgiconfig; 
+   removal of config file parameter checking, sourcing of config files and 
+   linking to the old common.config
+
 TAG: dlautils-build36-BP
 DATE: 07/31/2006
 STAFF: sc
