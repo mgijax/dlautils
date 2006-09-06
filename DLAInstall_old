@@ -1,12 +1,15 @@
 #!/bin/sh
 #
+#  $Header$
+#  $Name$
+#
 #  DLAInstall
 ###########################################################################
 #
 #  Purpose:  This script will install a data load product that follows the
 #            DLA standards.
 #
-#        Usage "DLAInstall  [-d -n]"
+#  Usage:  DLAInstall  [-d -n]  commonConfig  loadConfig  [loadConfigList]
 #
 #          where
 #              -d is an option that tells the script that this is a
@@ -15,11 +18,19 @@
 #              -n is an option that tells the script that it does not need
 #                 to verify the set of directories that are required by
 #                 most loads (FILEDIR, INPUTDIR, OUTPUTDIR, etc).
+#              commonConfig is full path name of the common configuration
+#                           file (common.config).
+#              loadConfig is the full path name of the configuration file
+#                         for the load that is being installed.
+#              loadConfigList is a list of additional configuration file
+#                             path names to be sourced (optional).
 #
 #  Env Vars:  None
 #
-#  Inputs:  None
-#   
+#  Inputs:
+#
+#      - Configuration files
+#
 #  Outputs:  None
 #
 #  Exit Codes:
@@ -27,10 +38,14 @@
 #      0 = Successful completion
 #      1 = An error occurred
 #
-#  Assumes: 
-#      - The calling script has set up the environment.The INSTALLDIR 
-#        environment variable is set to define where the load is being installed
+#  Assumes:
+#
+#      - All configuration files are sourced in the order that they are
+#        passed to the script. The common configuration file is sourced
+#        first, followed by 1 or more configuration files for the load.
 #      - DLA standards are being followed for environment variable names
+#      - The INSTALLDIR environment variable is set in the configuration
+#        file for the load to define where the load is being installed.
 #
 #  Implementation:
 #
@@ -57,6 +72,15 @@ installFailed ()
 }
 
 #
+#  Verify the arguments to the script.
+#
+if [ $# -lt 2 ]
+then
+    echo "Usage:  $0 [-d -n] commonConfig loadConfig [loadConfigList]"
+    installFailed
+fi
+
+#
 #  Check for the options to the script.
 #
 DEV=no
@@ -65,8 +89,7 @@ CHECK_DIR=yes
 set -- `getopt dn $*`
 if [ $? != 0 ]
 then
-    echo "DLAInstall  [-d -n]"
-    installFailed
+    usage
 fi
 
 for i in $*
@@ -76,6 +99,45 @@ do
         -n) CHECK_DIR=no; shift;;
         --) shift; break;;
     esac
+done
+
+#
+#  Save the common configuration file name.
+#
+COMMON_CONFIG_PATH=$1
+shift
+
+#
+#  Make sure the common configuration file exists and source it.
+#
+if [ -r ${COMMON_CONFIG_PATH} ]
+then
+    echo "Source ${COMMON_CONFIG_PATH}"
+    . ${COMMON_CONFIG_PATH}
+else
+    echo "Cannot source common configuration file: ${COMMON_CONFIG_PATH}"
+    installFailed
+fi
+
+#
+#  Make sure each additional configuration file exists and source it.
+#
+for i in $*
+do
+    if [ -r ${i} ]
+    then
+        echo "Source ${i}"
+        . ${i}
+        if [ ${DEV} = "yes" ]
+        then
+            chmod -f 664 ${i}*
+        else
+            chmod -f 644 ${i}*
+        fi
+    else
+        echo "Cannot source configuration file: ${i}"
+        installFailed
+    fi
 done
 
 #
@@ -91,6 +153,15 @@ fi
 #  Go to the load installation directory to proceed with the install.
 #
 cd ${INSTALLDIR}
+
+#
+#  Create a symbolic link to the common configuration file from the
+#  load installation directory.
+#
+echo "Create symbolic link to common config file."
+COMMON_CONFIG_FILE=`basename ${COMMON_CONFIG_PATH}`
+rm -f ${COMMON_CONFIG_FILE}
+ln -s ${COMMON_CONFIG_PATH} ${COMMON_CONFIG_FILE}
 
 #
 #  Verify the directories if the script was not given the option to skip
@@ -267,3 +338,50 @@ then
 fi
 
 installCompleted
+
+
+#  $Log$
+#  Revision 1.1.2.1  2006/08/01 11:09:39  sc
+#  dlautils-build36-1
+#
+#  Revision 1.5  2005/08/08 15:04:49  mbw
+#  removed check for INPUTDIR
+#
+#  Revision 1.4  2005/01/26 14:23:59  dbm
+#  dlautils-3-1-1-1
+#
+#  Revision 1.3.2.1  2005/01/04 14:00:19  dbm
+#  Added "-d" option for development installs and fixed permission settings.
+#
+#  Revision 1.3  2004/07/12 19:39:53  dbm
+#  Added -n option to skip directory verification
+#
+#  Revision 1.2  2004/06/22 16:50:09  dbm
+#  Do not create INPUTDIR if it does not exist.
+#
+#  Revision 1.1  2004/06/21 17:55:19  dbm
+#  New
+#
+#
+###########################################################################
+#
+# Warranty Disclaimer and Copyright Notice
+#
+#  THE JACKSON LABORATORY MAKES NO REPRESENTATION ABOUT THE SUITABILITY OR
+#  ACCURACY OF THIS SOFTWARE OR DATA FOR ANY PURPOSE, AND MAKES NO WARRANTIES,
+#  EITHER EXPRESS OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR A
+#  PARTICULAR PURPOSE OR THAT THE USE OF THIS SOFTWARE OR DATA WILL NOT
+#  INFRINGE ANY THIRD PARTY PATENTS, COPYRIGHTS, TRADEMARKS, OR OTHER RIGHTS.
+#  THE SOFTWARE AND DATA ARE PROVIDED "AS IS".
+#
+#  This software and data are provided to enhance knowledge and encourage
+#  progress in the scientific community and are to be used only for research
+#  and educational purposes.  Any reproduction or use for commercial purpose
+#  is prohibited without the prior express written permission of The Jackson
+#  Laboratory.
+#
+# Copyright \251 1996, 1999, 2002, 2004 by The Jackson Laboratory
+#
+# All Rights Reserved
+#
+##########################################################################
