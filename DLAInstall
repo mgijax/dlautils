@@ -162,22 +162,6 @@ then
 fi
 
 #
-#  If there is a HTML index file in the installation directory, copy it to
-#  the FILE directory and set the permissions.
-#
-if [ -f index.html ]
-then
-    echo "Copy index.html to ${FILEDIR}"
-    if [ ${DEV} = "yes" ]
-    then
-        chmod -f 664 index.html
-    else
-        chmod -f 644 index.html
-    fi
-    cp -p index.html ${FILEDIR}
-fi
-
-#
 #  Set permissions in the installation directory.
 #
 echo "Set permissions in the installation directory."
