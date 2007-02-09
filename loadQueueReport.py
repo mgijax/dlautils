@@ -81,7 +81,7 @@ cmd.append(
 # are no files waiting.
 #
 cmd.append(
-    'select ft.jobStreamName, fm.fileType, fm.fileName ' + \
+    'select ft.jobStreamName, fm.fileType, fm.fileName, fileSize ' + \
     'from #FileTypes ft, APP_FilesMirrored fm ' + \
     'where ft.fileType *= fm.fileType and ' + \
           'not exists (select 1 ' + \
@@ -96,6 +96,7 @@ for r in results[1]:
     jobStream = r['jobStreamName']
     fileType = r['fileType']
     fileName = r['fileName']
+    fileSize = r['fileSize']
 
     #
     # Print the job stream name if this is the first record for a new
@@ -106,11 +107,11 @@ for r in results[1]:
         lastJobStream = jobStream
 
     #
-    # Print the file name and file type if they exist.  Otherwise, indicate
+    # Print the file name, type and size if they exist.  Otherwise, indicate
     # that there are no files queued for the current job stream.
     #
     if fileName != None:
-        print fileName + " (" + fileType + ")"
+        print fileName + " (" + fileType + ") (" + str(fileSize) + ")"
     else:
         print "****  No Files Queued  ****"
 
