@@ -1,13 +1,13 @@
-#!/bin/csh
+#!/bin/sh
 
 #
-# Configuration.default
-#
-# Source this file from any csh script to set the env variables
-#
-#	ex. 	source Configuration.default
+#  Configuration.default
 #
 
+#
+#  If the MGICONFIG environment variable does not have a local override,
+#  use the default "live" settings.
+#
 if [ "${MGICONFIG}" = "" ]
 then
     MGICONFIG=/usr/local/mgi/live/mgiconfig
