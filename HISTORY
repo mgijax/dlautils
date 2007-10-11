@@ -1,3 +1,9 @@
+TAG: dlautils-3-5-4-2
+DATE: 10/11/2007
+STAFF: dbm
+CHANGES:
+1) Added -x option to DLAInstall script
+
 TAG: dlautils-3-5-4-1
 DATE: 8/9/2007
 STAFF: dbm
