@@ -1,10 +1,10 @@
-# Program: cleanse.awk
+# Program: fastaDupRemover.awk
 # Purpose: Remove duplicate sequence records from a FASTA
 #          formatted file saving the record with the greatest
 #          version number
-# Usage: 1) cat ${inputFile} | awk -f cleanse.awk -v DUPSfile=${DUP_SEQ_FILE} > ${outputFile}
+# Usage: 1) cat ${inputFile} | awk -f fastaDupRemover.awk -v DUPSfile=${DUP_SEQ_FILE} > ${outputFile}
 #        OR
-#        2) awk -f cleanse.awk -v DUPSfile=${DUP_SEQ_FILE} ${inputFile} > ${outputFile}
+#        2) awk -f fastaDupRemover.awk -v DUPSfile=${DUP_SEQ_FILE} ${inputFile} > ${outputFile}
 #        Note: Use 1) for inputFile > 2G
 # Envvars: none
 # Inputs: * 'inputFile' - a FASTA format file
