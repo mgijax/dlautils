@@ -1,8 +1,5 @@
 #!/bin/sh
 #
-#  $Header$
-#  $Name$
-#
 #  LOADNAME.sh
 ###########################################################################
 #
@@ -110,31 +107,29 @@ fi
 #
 . ${LOAD_CONFIG}
 
+##################################################################
+##################################################################
 #
-#  Function that performs cleanup tasks for the job stream prior to
-#  termination.
+# main
 #
-shutDown ()
-{
-    #
-    #  Perform post-load tasks.
-    #
-    postload
-
-    #
-    #  Mail the logs to the support staff.
-    #
-    mailLog "LOADNAME Load" | tee -a ${LOG}
-}
-
+##################################################################
+##################################################################
 #
-#  Perform pre-load tasks.
+#  Perform pre-load tasks (archive, start logs, print config environ
+#                          get and set jobstream key)
 #
 preload
 
 #
-#  Run the data load.
+# optionally rm all files and subdirs dirs of directories on the command line
+# Note: archiving does not remove them
 #
+cleanDir DIR1 DIR2 ... DIR3
+
+#
+#  Run the data load
+#
+
 echo "\n`date`" >> ${LOG_PROC}
 echo "Run data load" >> ${LOG_PROC}
 ${JAVA} ${JAVARUNTIMEOPTS} -classpath ${CLASSPATH} \
@@ -143,7 +138,7 @@ ${JAVA} ${JAVARUNTIMEOPTS} -classpath ${CLASSPATH} \
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then
-    echo "Data load failed.  Return status: ${STAT}" >> ${LOG_PROC}
+    echo "YourLoadName failed.  Return status: ${STAT}" >> ${LOG_PROC}
     shutDown
     exit 1
 fi
@@ -153,28 +148,3 @@ shutDown
 
 exit 0
 
-
-#  $Log$
-#
-###########################################################################
-#
-# Warranty Disclaimer and Copyright Notice
-#
-#  THE JACKSON LABORATORY MAKES NO REPRESENTATION ABOUT THE SUITABILITY OR
-#  ACCURACY OF THIS SOFTWARE OR DATA FOR ANY PURPOSE, AND MAKES NO WARRANTIES,
-#  EITHER EXPRESS OR IMPLIED, INCLUDING MERCHANTABILITY AND FITNESS FOR A
-#  PARTICULAR PURPOSE OR THAT THE USE OF THIS SOFTWARE OR DATA WILL NOT
-#  INFRINGE ANY THIRD PARTY PATENTS, COPYRIGHTS, TRADEMARKS, OR OTHER RIGHTS.
-#  THE SOFTWARE AND DATA ARE PROVIDED "AS IS".
-#
-#  This software and data are provided to enhance knowledge and encourage
-#  progress in the scientific community and are to be used only for research
-#  and educational purposes.  Any reproduction or use for commercial purpose
-#  is prohibited without the prior express written permission of The Jackson
-#  Laboratory.
-#
-# Copyright \251 1996, 1999, 2002, 2004 by The Jackson Laboratory
-#
-# All Rights Reserved
-#
-###########################################################################
