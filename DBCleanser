@@ -1,4 +1,5 @@
-#!/usr/bin/sh -x
+#!/usr/bin/sh 
+#
 # Program: DBCleanser
 # Purpose: Remove duplicate sequence records from a FASTA
 #          formatted file saving the record with the greatest

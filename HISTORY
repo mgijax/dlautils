@@ -1,9 +1,11 @@
+TAG: dlautils-4-2-0-4
 TAG: dlautils-4-2-0-3
 DATE: 03/17/2009
 STAFF: sc
 CHANGES:
 1) DBCleanser - removed '-x'
 2) JobStreamTemplate.sh - updated 
+3) removed old cvs directives and copyrights
 
 TAG: dlautils-4-2-0-2
 DATE: 02/03/2009
