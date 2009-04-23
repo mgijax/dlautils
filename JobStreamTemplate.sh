@@ -136,13 +136,7 @@ ${JAVA} ${JAVARUNTIMEOPTS} -classpath ${CLASSPATH} \
         -DCONFIG=${COMMON_CONFIG},${LOAD_CONFIG} \
         -DJOBKEY=${JOBKEY} ${LOADNAME_APP}
 STAT=$?
-if [ ${STAT} -ne 0 ]
-then
-    echo "YourLoadName failed.  Return status: ${STAT}" >> ${LOG_PROC}
-    shutDown
-    exit 1
-fi
-echo "Data load completed successfully" >> ${LOG_PROC}
+checkStatus ${STAT} "Your Load Name"
 
 shutDown
 
