@@ -1,3 +1,10 @@
+TAG: dlautils-4-2-0-6
+DATE: 07/17/2009
+STAFF: sc
+CHANGES: TR9718 - GBRecordSplitter updated to determine
+  end of ORGANISM section using '.' since not all RefSeq
+  records have the 'required' REFERENCE section.
+
 TAG: dlautils-4-2-0-5
 DATE: 04/23/2009
 STAFF: sc

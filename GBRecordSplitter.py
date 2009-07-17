@@ -285,15 +285,16 @@ while line != "":
         #  If the "ORGANISM" line is found, check for mouse (if needed).
         #
         elif line[2:10] == "ORGANISM":
-
+	    #print 'found organism line "%s"' % line
             #
             #  If mouse records are the only ones to keep, search each line
             #  of the ORGANISM section for the mouse indicator string.
             #
             if mouseOnly:
-                while line[0:9] != "REFERENCE":
+                #while line[0:9] != "REFERENCE":
+		while string.strip(line)[-1] != '.':
                     line = sys.stdin.readline()
-
+                    #print "'%s'" % line
                     #
                     #  Save the current line of the record.
                     #
@@ -304,12 +305,14 @@ while line != "":
                     #
                     if string.find(line,"Muridae; Murinae; Mus") >= 0:
                         goodRecord = 1
+			#print 'this is a mouse'
                         continue
 
                 #
                 #  The mouse string was not found, so it is a bad record.
                 #
                 badRecord = 1
+		#print 'this is not a mouse'
                 continue
 
             #
