@@ -376,7 +376,7 @@ preload ()
     #  Start a new job stream and get the job stream key.
     #
     echo "Start a new job stream" >> ${LOG_PROC}
-    JOBKEY=`${JOBSTART_CSH} ${RADAR_DBSCHEMADIR} ${JOBSTREAM}`
+    JOBKEY=`${JOBSTART_CSH} ${JOBSTREAM}`
     if [ $? -ne 0 ]
     then
         echo "Could not start a new job stream for this load" >> ${LOG_PROC}
@@ -418,7 +418,7 @@ postload ()
     if [ ${JOBKEY} -gt 0 ]
     then
 	echo "End the job stream" >> ${LOG_PROC}
-	${JOBEND_CSH} ${RADAR_DBSCHEMADIR} ${JOBKEY} ${STAT}
+	${JOBEND_CSH} ${JOBKEY} ${STAT}
     fi
 
     #
