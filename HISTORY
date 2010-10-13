@@ -1,3 +1,11 @@
+TAG: dlautils-4-4-0-1
+DATE: 10/13/2010
+STAFF: dbm
+CHANGES:
+1) loadQueueReport.py: modified to make it stop printing duplicate
+   "No Files Queued" messages when there are multiple file types per
+   job stream.
+
 TAG: dlautils-4-3-3-1
 DATE: 03/11/2010
 STAFF: dbm
