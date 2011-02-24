@@ -1,3 +1,10 @@
+TAG: dlautils-4-4-4-1
+DATE: 02/24/2011
+STAFF: sc
+CHANGES:
+1) GBRecordSplitter.py - added -v option to consider the record complete when
+   'variation' qualifier found.
+
 TAG: dlautils-4-4-0-1
 DATE: 10/13/2010
 STAFF: dbm

@@ -97,6 +97,7 @@ usage = "Usage: " + sys.argv[0] + "\n" + \
 recordCount = 1000000000
 divisionList = ""
 mouseOnly = 0
+variation = 0
 outputFile = ""
 fileNum = 0
 
@@ -121,6 +122,9 @@ while len(sys.argv) >= 3:
     elif sys.argv[1] == "-m":
         mouseOnly = 1
         del sys.argv[1]
+    elif sys.argv[1] == "-v":
+	variation = 1
+	del sys.argv[1]
     else:
         break
 
@@ -213,6 +217,9 @@ while line != "":
         #
         while 1:
             line = sys.stdin.readline()
+	    if variation == 1 and line[0:14] == "     variation":
+		while line[0:2] != "//":
+		    line = sys.stdin.readline()
             outFile.write(line)
             if line[0:2] == "//":
                 break
