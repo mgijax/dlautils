@@ -15,6 +15,7 @@
 #      GBRecordSplitter.py  [ -r RecordCount ]
 #                           [ -d DivisionList ]
 #                           [ -m ]
+#			    [ -v ]
 #                           OutputFile  FileNum
 #
 #      where
@@ -31,6 +32,11 @@
 #
 #          -m indicates that only mouse sequence records should be included
 #             in the output file.
+#
+#	   -v indicates that the record is to be truncated when a 'variation'
+#	      section if found. These can be very long sections (RefSeq) which
+#	      cause the Java IO Reader to hang. There is no useful info after
+#	      this optional section
 #
 #          OutputFile is the path name for the output files. Each output file
 #                     that is created will begin with this path name and
@@ -91,7 +97,7 @@ import string
 #  Global Variables
 #
 usage = "Usage: " + sys.argv[0] + "\n" + \
-        "       [ -r RecordCount ] [ -d DivisionList ] [ -m ]\n" + \
+        "       [ -r RecordCount ] [ -d DivisionList ] [ -m ] [ -v ]\n" + \
         "       OutputFile FileNum"
 
 recordCount = 1000000000
