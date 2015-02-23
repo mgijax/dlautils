@@ -92,7 +92,7 @@ createArchive ()
     #
     #  Get the date and time to use for archiving the files.
     #
-    ARC_FILE=${ARC_DIR}/arc`date '+%Y%m%d.%H%M'`.jar
+    ARC_FILE=${ARC_DIR}/arc`date '+%Y%m%d.%H%M'`.tar
 
     #
     #  Archive the files.
@@ -104,9 +104,9 @@ createArchive ()
         do
             if [ -f ${ARC_FILE} ]
             then
-                jar -uvfM ${ARC_FILE} ${FILE} >/dev/null 2>&1
+                tar -uvf ${ARC_FILE} ${FILE} >/dev/null 2>&1
             else
-                jar -cvfM ${ARC_FILE} ${FILE} >/dev/null 2>&1
+                tar -cvf ${ARC_FILE} ${FILE} >/dev/null 2>&1
             fi
         done
     fi
