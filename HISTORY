@@ -1,3 +1,10 @@
+TAG: dlautils-5-2-1-1
+DATE: 02/23/2015
+STAFF: dbm
+CHANGES:
+1) DLAJobStreamFunctions.sh: use tar instead of jar for archiving for
+                             solaris/linux compatability
+
 TAG: dlautils-4-4-1-2
 DATE: 04/11/2011
 STAFF: sc
