@@ -1,3 +1,9 @@
+TAG: dlautils-5-2-1-2
+DATE: 02/24/2015
+STAFF: dbm
+CHANGES:
+1) DLAJobStreamFunctions.sh: gzip the archive file after creating it
+
 TAG: dlautils-5-2-1-1
 DATE: 02/23/2015
 STAFF: dbm
