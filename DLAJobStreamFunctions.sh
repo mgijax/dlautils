@@ -109,6 +109,7 @@ createArchive ()
                 tar -cvf ${ARC_FILE} ${FILE} >/dev/null 2>&1
             fi
         done
+        gzip ${ARC_FILE}
     fi
 }
 
