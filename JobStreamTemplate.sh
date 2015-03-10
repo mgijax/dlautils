@@ -130,7 +130,8 @@ cleanDir DIR1 DIR2 ... DIR3
 #  Run the data load
 #
 
-echo "\n`date`" >> ${LOG_PROC}
+echo "" >> ${LOG_PROC}
+echo "`date`" >> ${LOG_PROC}
 echo "Run data load" >> ${LOG_PROC}
 ${JAVA} ${JAVARUNTIMEOPTS} -classpath ${CLASSPATH} \
         -DCONFIG=${COMMON_CONFIG},${LOAD_CONFIG} \

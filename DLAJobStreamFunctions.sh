@@ -162,7 +162,8 @@ getConfigEnv ()
 
     if [ "${ENV_OPT}" = "YES" ]
     then
-        echo "\n**** Environment Variables ****"
+        echo ""
+        echo "**** Environment Variables ****"
         env | pg | sort
     fi
     echo "============================================================"
@@ -313,7 +314,8 @@ stopLog ()
     do
         if [ -w $1 ]
         then
-            echo "\nStop Log: `date`" >> $1
+            echo "" >> $1
+            echo "Stop Log: `date`" >> $1
         else
             echo "Cannot write to log file: $1" | tee -a ${LOG}
             exit 1
@@ -462,7 +464,9 @@ shutDown ()
     #
     #  Report the location of the log files.
     #
-    echo "\nSee logs at ${LOGDIR}\n" >> ${LOG_PROC}
+    echo "" >> ${LOG_PROC}
+    echo "See logs at ${LOGDIR}" >> ${LOG_PROC}
+    echo "" >> ${LOG_PROC}
 
     #
     #  Perform postload steps.
