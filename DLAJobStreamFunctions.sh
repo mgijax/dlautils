@@ -164,7 +164,7 @@ getConfigEnv ()
     then
         echo ""
         echo "**** Environment Variables ****"
-        env | pg | sort
+        env | sort
     fi
     echo "============================================================"
 }
