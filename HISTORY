@@ -1,3 +1,9 @@
+TAG: dlautils-5-2-2-1
+DATE: 05/22/2015
+STAFF: lec
+CHANGES:
+1) TR12029/loadQueueReport.py/flippable for postgres
+
 TAG: dlautils-5-2-1-4
 DATE: 04/03/2015
 STAFF: dbm

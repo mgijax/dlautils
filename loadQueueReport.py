@@ -45,17 +45,33 @@
 
 import os
 import sys 
-import db
 import string
 import mgi_utils
 
+try:
+    if os.environ['DB_TYPE'] == 'postgres':
+        import pg_db
+        db = pg_db
+        db.setTrace()
+        db.setAutoTranslate()
+        db.setAutoTranslateBE()
+        dbServer = os.environ['PG_RADAR_DBSERVER']
+        dbName = os.environ['PG_RADAR_DBNAME']
+        dbUser = os.environ['PG_RADAR_DBUSER']
+    else:
+        import db
+        dbServer = os.environ['RADAR_DBSERVER']
+        dbName = os.environ['RADAR_DBNAME']
+        dbUser = os.environ['RADAR_DBUSER']
+except:
+    import db
+    dbServer = os.environ['RADAR_DBSERVER']
+    dbName = os.environ['RADAR_DBNAME']
+    dbUser = os.environ['RADAR_DBUSER']
 
 #
 # Connect to the database.
 #
-dbServer = os.environ['RADAR_DBSERVER']
-dbName = os.environ['RADAR_DBNAME']
-dbUser = os.environ['RADAR_DBUSER']
 dbPasswordFile = os.environ['RADAR_DBPASSWORDFILE']
 dbPassword = string.strip(open(dbPasswordFile,'r').readline())
 db.set_sqlLogin(dbUser, dbPassword, dbServer, dbName)
