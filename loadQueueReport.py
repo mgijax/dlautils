@@ -55,24 +55,26 @@ try:
         db.setTrace()
         db.setAutoTranslate()
         db.setAutoTranslateBE()
-        dbServer = os.environ['PG_RADAR_DBSERVER']
-        dbName = os.environ['PG_RADAR_DBNAME']
-        dbUser = os.environ['PG_RADAR_DBUSER']
+        dbServer = os.environ['PG_DBSERVER']
+        dbName = os.environ['PG_DBNAME']
+        dbUser = os.environ['PG_DBUSER']
+	dbPasswordFile = os.environ['PG_1LINE_PASSFILE']
     else:
         import db
         dbServer = os.environ['RADAR_DBSERVER']
         dbName = os.environ['RADAR_DBNAME']
         dbUser = os.environ['RADAR_DBUSER']
+	dbPasswordFile = os.environ['RADAR_DBPASSWORDFILE']
 except:
     import db
     dbServer = os.environ['RADAR_DBSERVER']
     dbName = os.environ['RADAR_DBNAME']
     dbUser = os.environ['RADAR_DBUSER']
+    dbPasswordFile = os.environ['RADAR_DBPASSWORDFILE']
 
 #
 # Connect to the database.
 #
-dbPasswordFile = os.environ['RADAR_DBPASSWORDFILE']
 dbPassword = string.strip(open(dbPasswordFile,'r').readline())
 db.set_sqlLogin(dbUser, dbPassword, dbServer, dbName)
 
