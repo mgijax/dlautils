@@ -52,7 +52,7 @@ import db
 db.setTrace()
 db.setAutoTranslate(False)
 db.setAutoTranslateBE(False)
-dbPasswordFile = os.environ['PG_1LINE_PASSFILE']
+dbPasswordFile = os.environ['MGD_DBPASSWORDFILE']
 dbServer = os.environ['RADAR_DBSERVER']
 dbName = os.environ['RADAR_DBNAME']
 dbUser = os.environ['RADAR_DBUSER']
