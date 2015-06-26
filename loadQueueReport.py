@@ -47,30 +47,16 @@ import os
 import sys 
 import string
 import mgi_utils
+import db
 
-try:
-    if os.environ['DB_TYPE'] == 'postgres':
-        import pg_db
-        db = pg_db
-        db.setTrace()
-        db.setAutoTranslate()
-        db.setAutoTranslateBE()
-        dbServer = os.environ['PG_DBSERVER']
-        dbName = os.environ['PG_DBNAME']
-        dbUser = os.environ['PG_DBUSER']
-	dbPasswordFile = os.environ['PG_1LINE_PASSFILE']
-    else:
-        import db
-        dbServer = os.environ['RADAR_DBSERVER']
-        dbName = os.environ['RADAR_DBNAME']
-        dbUser = os.environ['RADAR_DBUSER']
-	dbPasswordFile = os.environ['RADAR_DBPASSWORDFILE']
-except:
-    import db
-    dbServer = os.environ['RADAR_DBSERVER']
-    dbName = os.environ['RADAR_DBNAME']
-    dbUser = os.environ['RADAR_DBUSER']
-    dbPasswordFile = os.environ['RADAR_DBPASSWORDFILE']
+db.setTrace()
+db.setAutoTranslate(False)
+db.setAutoTranslateBE(False)
+dbPasswordFile = os.environ['PG_1LINE_PASSFILE']
+dbServer = os.environ['RADAR_DBSERVER']
+dbName = os.environ['RADAR_DBNAME']
+dbUser = os.environ['RADAR_DBUSER']
+dbPasswordFile = os.environ['RADAR_DBPASSWORDFILE']
 
 #
 # Connect to the database.
@@ -84,7 +70,7 @@ db.set_sqlLogin(dbUser, dbPassword, dbServer, dbName)
 cmd = []
 cmd.append(
     'select distinct fm.fileType, js.jobStreamName ' + \
-    'into #FileTypes ' + \
+    'INTO TEMPORARY TABLE FileTypes ' + \
     'from APP_FilesMirrored fm, ' + \
          'APP_FilesProcessed fp, ' + \
          'APP_JobStream js ' + \
@@ -96,7 +82,7 @@ cmd.append(
 #
 cmd.append(
     'select distinct jobStreamName ' + \
-    'from #FileTypes ' + \
+    'from FileTypes ' + \
     'order by jobStreamName')
 
 #
@@ -104,7 +90,7 @@ cmd.append(
 #
 cmd.append(
     'select ft.jobStreamName, fm.fileType, fm.fileName, fileSize ' + \
-    'from #FileTypes ft, APP_FilesMirrored fm ' + \
+    'from FileTypes ft, APP_FilesMirrored fm ' + \
     'where ft.fileType = fm.fileType and ' + \
           'not exists (select 1 ' + \
                       'from APP_FilesProcessed fp ' + \
