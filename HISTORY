@@ -1,3 +1,9 @@
+TAG: dlautils-6-0-1-1
+DATE: 11/16/2015
+STAFF: dbm 
+CHANGES:
+1) DLAInstall: Create INPUTDIR is needed
+
 TAG: dlautils-6-0-0-2
 DATE: 08/24/2015
 STAFF: dbm 
