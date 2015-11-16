@@ -166,6 +166,17 @@ then
 fi
 
 #
+# Create the input directory if it's defined and doesn't already exist.
+#
+if [ "${INPUTDIR}" != "" ]
+then
+    if [ ! -d ${INPUTDIR} ]
+    then
+        mkdir -p ${INPUTDIR}
+    fi
+fi
+
+#
 #  Set permissions in the installation directory.
 #
 echo "Set permissions in the installation directory."
