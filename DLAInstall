@@ -218,31 +218,6 @@ then
         echo "Cannot execute ant utility: ${ANT}"
         installFailed
     fi
-
-    #
-    #  Set permissions on Java files and directories.
-    #
-    echo "Set permissions on Java files and directories."
-    if [ ${DEV} = "yes" ]
-    then
-        chmod -f 664 build.xml
-        chmod -f 775 *.jar
-        find classes -type d -exec chmod -f 775 {} \;
-        find classes -type f -exec chmod -f 664 {} \;
-        find javadocs -type d -exec chmod -f 775 {} \;
-        find javadocs -type f -exec chmod -f 664 {} \;
-        find java -type d -exec chmod -f 775 {} \;
-        find java -name "*.java" -exec chmod -f 664 {} \;
-    else
-        chmod -f 644 build.xml
-        chmod -f 750 *.jar
-        find classes -type d -exec chmod -f 755 {} \;
-        find classes -type f -exec chmod -f 640 {} \;
-        find javadocs -type d -exec chmod -f 755 {} \;
-        find javadocs -type f -exec chmod -f 644 {} \;
-        find java -type d -exec chmod -f 755 {} \;
-        find java -name "*.java" -exec chmod -f 640 {} \;
-    fi
 fi
 
 installCompleted
