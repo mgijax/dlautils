@@ -2,7 +2,7 @@ TAG: dlautils-6-0-3-1
 DATE: 4/7/2016
 STAFF: dbm 
 CHANGES:
-1) DLAInstall: Removed chmod for HISTORY and system_docs
+1) DLAInstall: Removed chmod for HISTORY, system_docs and java files
 
 TAG: dlautils-6-0-1-1
 DATE: 11/16/2015
