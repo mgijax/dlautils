@@ -180,15 +180,6 @@ fi
 #  Set permissions in the installation directory.
 #
 echo "Set permissions in the installation directory."
-if [ -f HISTORY ]
-then
-    if [ ${DEV} = "yes" ]
-    then
-        chmod -f 664 HISTORY
-    else
-        chmod -f 644 HISTORY
-    fi
-fi
 if [ -d bin ]
 then
     if [ ${DEV} = "yes" ]
@@ -198,17 +189,6 @@ then
     else
         chmod -f 755 bin
         find bin -name "*.sh" -exec chmod -f 750 {} \;
-    fi
-fi
-if [ -d system_docs ]
-then
-    if [ ${DEV} = "yes" ]
-    then
-        chmod -f 775 system_docs
-        find system_docs -type f -exec chmod -f 664 {} \;
-    else
-        chmod -f 755 system_docs
-        find system_docs -type f -exec chmod -f 644 {} \;
     fi
 fi
 
