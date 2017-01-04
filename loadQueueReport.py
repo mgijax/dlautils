@@ -49,8 +49,6 @@ import string
 import mgi_utils
 import db
 
-db.setAutoTranslate(False)
-db.setAutoTranslateBE(False)
 dbPasswordFile = os.environ['MGD_DBPASSWORDFILE']
 dbServer = os.environ['RADAR_DBSERVER']
 dbName = os.environ['RADAR_DBNAME']
