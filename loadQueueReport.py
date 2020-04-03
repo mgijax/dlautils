@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 
 #
 #  loadQueueReport.py
@@ -58,7 +57,7 @@ dbPasswordFile = os.environ['RADAR_DBPASSWORDFILE']
 #
 # Connect to the database.
 #
-dbPassword = string.strip(open(dbPasswordFile,'r').readline())
+dbPassword = str.strip(open(dbPasswordFile,'r').readline())
 db.set_sqlLogin(dbUser, dbPassword, dbServer, dbName)
 
 #
@@ -113,7 +112,7 @@ for r in results[2]:
     # If there is already a list of files for this job stream, get the list
     # so a new file can be added to it. Otherwise, start a new list.
     #
-    if fileDict.has_key(jobStream):
+    if jobStream in fileDict:
         list = fileDict[jobStream]
     else:
         list = []
@@ -127,12 +126,12 @@ for r in results[2]:
 #
 # Print a heading for the report.
 #
-print "This report provides a list of files that are currently waiting"
-print "to be processed by each job stream. The files in this report have"
-print "been logged in radar..APP_FilesMirrored, but have not been logged"
-print "in radar..APP_FilesProcessed."
-print "\nDate: " + mgi_utils.date()
-print "-"*80
+print("This report provides a list of files that are currently waiting")
+print("to be processed by each job stream. The files in this report have")
+print("been logged in radar..APP_FilesMirrored, but have not been logged")
+print("in radar..APP_FilesProcessed.")
+print("\nDate: " + mgi_utils.date())
+print("-"*80)
 
 #
 # Create a new section in the report for each job stream.
@@ -143,7 +142,7 @@ for r in results[1]:
     #
     # Print the name of the current job stream.
     #
-    print "\n\nJob Stream: " + jobStream + "\n"
+    print("\n\nJob Stream: " + jobStream + "\n")
 
     #
     # If there is at least one file in the dictionary for this job stream,
@@ -151,10 +150,10 @@ for r in results[1]:
     # in the report. Otherwise, indicate that no files are in the queue
     # for this job stream.
     #
-    if fileDict.has_key(jobStream):
+    if jobStream in fileDict:
         for (fileType,fileName,fileSize) in fileDict[jobStream]:
-            print fileName + " (" + fileType + ") (" + str(fileSize) + ")"
+            print(fileName + " (" + fileType + ") (" + str(fileSize) + ")")
     else:
-        print "****  No Files Queued  ****"
+        print("****  No Files Queued  ****")
 
 sys.exit(0)

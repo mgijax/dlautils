@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 #
 #  GBRecordSplitter.py
 ###########################################################################
@@ -113,32 +112,32 @@ fileNum = 0
 while len(sys.argv) >= 3:
     if sys.argv[1] == "-r":
         if len(sys.argv) > 2:
-            recordCount = string.atoi(sys.argv[2])
+            recordCount = str.atoi(sys.argv[2])
         else:
-            print usage
+            print(usage)
             sys.exit(1)
         del sys.argv[1:3]
     elif sys.argv[1] == "-d":
         if len(sys.argv) > 2:
             divisionList = sys.argv[2]
         else:
-            print usage
+            print(usage)
             sys.exit(1)
         del sys.argv[1:3]
     elif sys.argv[1] == "-m":
         mouseOnly = 1
         del sys.argv[1]
     elif sys.argv[1] == "-v":
-	variation = 1
-	del sys.argv[1]
+        variation = 1
+        del sys.argv[1]
     else:
         break
 
 if len(sys.argv) == 3:
     outputFile = sys.argv[1]
-    fileNum = string.atoi(sys.argv[2])
+    fileNum = str.atoi(sys.argv[2])
 else:
-    print usage
+    print(usage)
     sys.exit(1)
 
 #print "recordCount=" + str(recordCount)
@@ -152,7 +151,7 @@ else:
 #  to check against each input record.
 #
 if divisionList != "":
-    divisionList = string.splitfields(divisionList,",")
+    divisionList = str.splitfields(divisionList,",")
 else:
     divisionList = []
 
@@ -208,8 +207,8 @@ while line != "":
         #  written to it.
         #
         if count == 0:
-            outFile = open(outputFile+"."+string.zfill(str(fileNum),3)+ \
-                           "."+string.zfill(str(fileSeqNum+1),3),'w')
+            outFile = open(outputFile+"."+str.zfill(str(fileNum),3)+ \
+                           "."+str.zfill(str(fileSeqNum+1),3),'w')
 
         #
         #  Write the lines from the current record that have already
@@ -223,9 +222,9 @@ while line != "":
         #
         while 1:
             line = sys.stdin.readline()
-	    if variation == 1 and line[0:14] == "     variation":
-		while line[0:2] != "//":
-		    line = sys.stdin.readline()
+            if variation == 1 and line[0:14] == "     variation":
+                while line[0:2] != "//":
+                    line = sys.stdin.readline()
             outFile.write(line)
             if line[0:2] == "//":
                 break
@@ -298,14 +297,14 @@ while line != "":
         #  If the "ORGANISM" line is found, check for mouse (if needed).
         #
         elif line[2:10] == "ORGANISM":
-	    #print 'found organism line "%s"' % line
+            #print 'found organism line "%s"' % line
             #
             #  If mouse records are the only ones to keep, search each line
-            #  of the ORGANISM section for the mouse indicator string.
+            #  of the ORGANISM section for the mouse indicator str.
             #
             if mouseOnly:
                 #while line[0:9] != "REFERENCE":
-		while string.strip(line)[-1] != '.':
+                while str.strip(line)[-1] != '.':
                     line = sys.stdin.readline()
                     #print "'%s'" % line
                     #
@@ -314,22 +313,22 @@ while line != "":
                     recordLines = recordLines + line
 
                     #
-                    #  The mouse string was found, so it is a good record.
+                    #  The mouse str.was found, so it is a good record.
                     #
-                    if string.find(line,"Muridae; Murinae; Mus") >= 0:
+                    if str.find(line,"Muridae; Murinae; Mus") >= 0:
                         goodRecord = 1
-			#print 'this is a mouse'
+                        #print 'this is a mouse'
                         continue
 
                 #
-                #  The mouse string was not found, so it is a bad record.
+                #  The mouse str.was not found, so it is a bad record.
                 #
                 badRecord = 1
-		#print 'this is not a mouse'
+                #print 'this is not a mouse'
                 continue
 
             #
-            #  It must be a good record if the mouse string doesn't need
+            #  It must be a good record if the mouse str.doesn't need
             #  to be checked.
             #
             else:

@@ -362,12 +362,12 @@ preload ()
     #
     #  Archive the log and report files from the previous run.
     #
-    if [ $# -gt 0 ]
-    then
-        createArchive ${ARCHIVEDIR} ${LOGDIR} ${RPTDIR} $* | tee -a ${LOG}
-    else
-	createArchive ${ARCHIVEDIR} ${LOGDIR} ${RPTDIR} | tee -a ${LOG}
-    fi
+    #if [ $# -gt 0 ]
+    #then
+        #createArchive ${ARCHIVEDIR} ${LOGDIR} ${RPTDIR} $* | tee -a ${LOG}
+    #else
+	#createArchive ${ARCHIVEDIR} ${LOGDIR} ${RPTDIR} | tee -a ${LOG}
+    #fi
 
     #
     #  Initialize the log files.
