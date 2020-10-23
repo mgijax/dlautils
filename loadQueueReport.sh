@@ -6,7 +6,7 @@ rm -f ${LOG}
 
 . ./Configuration
 
-${DLA_UTILS}/loadQueueReport.py > ${LOG}
+${PYTHON} ${DLA_UTILS}/loadQueueReport.py > ${LOG}
 
 if [ "${MAIL_LOG_PROC}" != "" ]
 then
