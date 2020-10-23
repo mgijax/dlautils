@@ -1,3 +1,9 @@
+TAG: dlautils-6-0-16-2
+DATE: 10/23/2020
+STAFF: dbm
+1) Added Install script to set permission
+2) loadQueueReport.sh: call python script with ${PYTHON}
+
 TAG: dlautils-6-0-16-1
 DATE: 08/21/2020
 STAFF: lec
