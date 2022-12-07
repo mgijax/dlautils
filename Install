@@ -1,0 +1,13 @@
+#!/bin/sh
+
+#
+# Installation script for dlautils product
+#
+
+cd `dirname $0` && . ./Configuration
+
+for i in DBCleanser DLAInstall *.sh *.py
+do
+    chmod 775 $i
+done
+

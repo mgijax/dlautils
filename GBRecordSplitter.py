@@ -112,7 +112,7 @@ fileNum = 0
 while len(sys.argv) >= 3:
     if sys.argv[1] == "-r":
         if len(sys.argv) > 2:
-            recordCount = str.atoi(sys.argv[2])
+            recordCount = int(sys.argv[2])
         else:
             print(usage)
             sys.exit(1)
@@ -135,7 +135,7 @@ while len(sys.argv) >= 3:
 
 if len(sys.argv) == 3:
     outputFile = sys.argv[1]
-    fileNum = str.atoi(sys.argv[2])
+    fileNum = int(sys.argv[2])
 else:
     print(usage)
     sys.exit(1)
