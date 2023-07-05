@@ -84,6 +84,8 @@
 #  Date        SE   Change Description
 #  ----------  ---  -------------------------------------------------------
 #
+#  06/26/2023  sc   updated to exclude duplicates, last one wins (newest one)
+# 
 #  10/05/2004  DBM  Initial development
 #
 ###########################################################################
@@ -105,6 +107,10 @@ mouseOnly = 0
 variation = 0
 outputFile = ""
 fileNum = 0
+seqId = ""
+
+# {seqId:record, ...}
+seqIdDict = {}
 
 #
 #  Check all the arguments to the script.
@@ -214,7 +220,7 @@ while line != "":
         #  Write the lines from the current record that have already
         #  been read.
         #
-        outFile.write(recordLines)
+        #outFile.write(recordLines)
 
         #
         #  Write the remaining lines of the current record.  The last line
@@ -225,8 +231,11 @@ while line != "":
             if variation == 1 and line[0:14] == "     variation":
                 while line[0:2] != "//":
                     line = sys.stdin.readline()
-            outFile.write(line)
+            #outFile.write(line)
+            recordLines = recordLines + line    
             if line[0:2] == "//":
+                print('adding %s to seqIdDict' % seqId)
+                seqIdDict[seqId] = recordLines
                 break
 
         #
@@ -292,7 +301,14 @@ while line != "":
                 if divisionList.count(line[64:67]) == 0:
                     badRecord = 1
                     continue
-
+        elif line[0:9] == "ACCESSION":
+            #
+            # get the seqId to assure dupes are not included
+            #
+            #print('ACCESSION line')
+            seqId = line.split(' ')[3]
+            #print('seqId: %s' % seqId)
+            
         #
         #  If the "ORGANISM" line is found, check for mouse (if needed).
         #
@@ -306,7 +322,6 @@ while line != "":
                 #while line[0:9] != "REFERENCE":
                 while str.strip(line)[-1] != '.':
                     line = sys.stdin.readline()
-                    #print "'%s'" % line
                     #
                     #  Save the current line of the record.
                     #
@@ -317,7 +332,7 @@ while line != "":
                     #
                     if str.find(line,"Muridae; Murinae; Mus") >= 0:
                         goodRecord = 1
-                        #print 'this is a mouse'
+                        #print('this is a mouse')
                         continue
 
                 #
@@ -344,6 +359,9 @@ while line != "":
 #  Close the current output file.
 #
 if count > 0:
+    for seqId in seqIdDict:
+        outFile.write(seqIdDict[seqId])
+
     outFile.close()
 
 sys.exit(0)

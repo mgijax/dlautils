@@ -1,3 +1,8 @@
+TAG: dlautils-6-0-22-1
+DATE: 07/05/2023
+STAFF: sc
+1) GBRecordSplitter.py - handle multiple sequences for the same seqid - pick newt one
+
 TAG: dlautils-6-0-16-3
 DATE: 10/23/2020
 STAFF: dbm
