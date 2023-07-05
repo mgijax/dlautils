@@ -332,7 +332,7 @@ stopLog ()
 
 ###########################################################################
 #
-#  Name:  preload
+#  Name:  preload, preloadNoArchive
 #
 #  Usage:  preload [ list of other dirs to archive ]
 #
@@ -356,17 +356,16 @@ stopLog ()
 preload ()
 {
     #
-    #  Function that performs cleanup tasks for the job stream prior to
-    #  termination.
+    #  Function that performs cleanup tasks for the job stream prior to termination.
     #
     #
     #  Archive the log and report files from the previous run.
-    #
+
     if [ $# -gt 0 ]
     then
         createArchive ${ARCHIVEDIR} ${LOGDIR} ${RPTDIR} $* | tee -a ${LOG}
     else
-	createArchive ${ARCHIVEDIR} ${LOGDIR} ${RPTDIR} | tee -a ${LOG}
+        createArchive ${ARCHIVEDIR} ${LOGDIR} ${RPTDIR} | tee -a ${LOG}
     fi
 
     #
@@ -394,6 +393,33 @@ preload ()
     echo "JOBKEY=${JOBKEY}" >> ${LOG_PROC}
 }
 
+
+preloadNoArchive()
+{
+    #
+    #  Initialize the log files.
+    #
+    startLog ${LOG_PROC} ${LOG_DIAG} ${LOG_CUR} ${LOG_VAL} | tee -a ${LOG}
+
+    #
+    #  Write the configuration information to the log files.
+    #
+    getConfigEnv >> ${LOG_PROC}
+    getConfigEnv -e >> ${LOG_DIAG}
+
+    #
+    #  Start a new job stream and get the job stream key.
+    #
+    echo "Start a new job stream" >> ${LOG_PROC}
+    JOBKEY=`${JOBSTART_CSH} ${JOBSTREAM}`
+    if [ $? -ne 0 ]
+    then
+        echo "Could not start a new job stream for this load" >> ${LOG_PROC}
+        postload
+        exit 1
+    fi
+    echo "JOBKEY=${JOBKEY}" >> ${LOG_PROC}
+}
 
 ###########################################################################
 #
