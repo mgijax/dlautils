@@ -234,7 +234,7 @@ while line != "":
             #outFile.write(line)
             recordLines = recordLines + line    
             if line[0:2] == "//":
-                print('adding %s to seqIdDict' % seqId)
+                #print('adding %s to seqIdDict' % seqId)
                 seqIdDict[seqId] = recordLines
                 break
 
